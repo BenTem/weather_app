@@ -44,55 +44,104 @@
     </nav>
 
     <div class="container">
-
-      <div class="col-md-4">
-
-        <div class="ui-widget">
+        <div class="ui-widget col-md-4">
           <p class="lead">Search</p>
-
             <label for="search"></label>
             <input id="search">
-          <!-- <input id="search" type="text" placeholder="contact" /><br> -->
           <button type="button" class="btn btn-default" id="srch_btn">Go!</button>
           <p class="response" id="search_response" ></p>
-        </div>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-8">
         <p id="cities"></p>
       </div>
     </div><!-- /.container -->
+
     <script>
-        $(function () {
-          var acXHR;
-          $('#search').autocomplete({
+      $('#srch_btn').on('click', function(e){
+         e.preventDefault();
+         searchterm = $('#search').val();
+         console.log("SEARCH", searchterm);
+         
+         function getlatlong(searchterm, done) {
+            $.ajax({
+               method: 'GET',
+               url: 'http://autocomplete.wunderground.com/aq',
+               data: {
+                   query: searchterm
+               },
+               dataType: 'jsonp',
+               jsonp: 'cb',
+               // success: function (response) {
+               //   console.log("DATA", response);
+               //   done(response.RESULTS);
+               //   // console.log(response['RESULTS'][0].zmw + '.json');
+                       
+               // },
+               success: done,
+               error: function () {
+                   console.log('error');
+               }
+           });
+           console.log("return from function");
+         };
+
+         var responseCallback = function(result) {
+
+             var zmw = result['RESULTS'][0].zmw + '.json'
+             console.log("THIS BE ZMW", zmw)
+             $.ajax({
+               method: 'GET',
+               url: 'http://api.wunderground.com/api/44f0caac7402487f/conditions/q/zmw:' + zmw,
+               dataType: 'jsonp',
+               success: function (data) {
+                  var value = data['current_observation']; 
+                  $("#cities").empty();
+                  $("#cities").append('<p>' + "Weather: " + value.weather + "<br>" + "Temperature: " + value.temperature_string + '</p>')
+                   console.log(data);
+               },
+               error: function () {
+                   console.log(error);
+               }
+           });
+
+         }
+
+        getlatlong(searchterm, responseCallback);
+             
+    });
+
+    </script>
+    <script>
+      $(function () {
+         var acXHR;
+         $('#search').autocomplete({
             delay: 0,
             source: function (req, resCB) {
-              // if (acXHR) {
-              //     acXHR.abort(); //necessary if using actual json, but not here
-              // }
+               // if (acXHR) {
+               //     acXHR.abort(); This is important for when type is json
+               // }
               acXHR = $.ajax({
                 method: 'GET',
-                url: 'http://autocomplete.wunderground.com/aq',
-                data: {
-                  query: req.term
-                },
-                dataType: 'jsonp',
-                jsonp: 'cb',
-                success: function (data) {
-                  resCB(data['RESULTS'].map(function (city) {
+                  url: 'http://autocomplete.wunderground.com/aq',
+                  data: {
+                    query: req.term
+                  },
+                  dataType: 'jsonp',
+                  jsonp: 'cb',
+                  success: function (data) {
+                    resCB(data['RESULTS'].map(function (city) {
                       return city.name;
-                  }));
-                },
-                error: function () {
-                  resCB();
-                }
+                    }));
+                  },
+                  error: function () {
+                    resCB();
+                  }
               });
-            }
-          });
-        });
+           }
+         });
+       });
     </script>
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
