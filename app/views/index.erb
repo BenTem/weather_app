@@ -50,7 +50,7 @@
         <div class="ui-widget">
           <p class="lead">Search</p>
 
-            <label for="search">Your city: </label>
+            <label for="search"></label>
             <input id="search">
           <!-- <input id="search" type="text" placeholder="contact" /><br> -->
           <button type="button" class="btn btn-default" id="srch_btn">Go!</button>
@@ -62,29 +62,35 @@
         <p id="cities"></p>
       </div>
     </div><!-- /.container -->
-
     <script>
-
-    $('#search').on('keyup', function(e) {
-      $.getJSON( 
-        "http://autocomplete.wunderground.com/aq?query=" + $('#search').val() + '&cb=?'
-        ).done(function(returnData){
-          $("#cities").empty();
-          var array = [];
-          $.each(returnData.RESULTS, function(index, value) {
-            array.push(value.name);
-          });
-
-          $(function() {
-            var availableTags = array;
-            $("#search").autocomplete({
-              source: availableTags
-            });
+        $(function () {
+          var acXHR;
+          $('#search').autocomplete({
+            delay: 0,
+            source: function (req, resCB) {
+              // if (acXHR) {
+              //     acXHR.abort(); //necessary if using actual json, but not here
+              // }
+              acXHR = $.ajax({
+                method: 'GET',
+                url: 'http://autocomplete.wunderground.com/aq',
+                data: {
+                  query: req.term
+                },
+                dataType: 'jsonp',
+                jsonp: 'cb',
+                success: function (data) {
+                  resCB(data['RESULTS'].map(function (city) {
+                      return city.name;
+                  }));
+                },
+                error: function () {
+                  resCB();
+                }
+              });
+            }
           });
         });
-      });
-
-
     </script>
 
     <!-- Bootstrap core JavaScript
