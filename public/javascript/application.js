@@ -52,10 +52,12 @@ $(function () {
         url: 'http://api.wunderground.com/api/44f0caac7402487f/conditions/q/zmw:' + zmw,
         dataType: 'jsonp',
         success: function (data) {
-          var value = data['current_observation']; 
+          var value = data['current_observation'];
+          $("#city").empty();
+          $("#city").append("<h3>" + value.display_location['city'] + ", " +  value.display_location['country'] + "</h3>");
+
           $("#cities").empty();
-          $("#cities").append("<h3>" +
-            value.display_location['city'] + ", " +  value.display_location['country'] + "</h3>" + "<p>" +
+          $("#cities").append("<p>" +
             "<br>" + "Local time: " + value.local_time_rfc822 + 
             "<br>" + "Weather: " + value.weather + 
             "<br>" + "Temperature: " + value.temperature_string + 
