@@ -4,150 +4,38 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
 
-    <title>Contact List</title>
+    <title>Weather App</title>
 
-    <!-- Bootstrap core CSS -->
     <link href="../../stylesheets/bootstrap.min.css" rel="stylesheet">
-    <link href="../../stylesheets/bootstrap-theme.min.css" rel="stylesheet">
-    <!-- Custom styles for this template -->
     <link href="../../stylesheets/starter-template.css" rel="stylesheet">
 
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-
-
   </head>
-
   <body>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Weather</a> 
+
+          <a class="navbar-brand" href="#"><strong>Weather</strong></a> 
         </div>
       </div>
     </nav>
 
     <div class="container">
         <div class="ui-widget col-md-4">
-          <p class="lead">Search</p>
+          <h2 class="lead"><strong>Search Cities</strong></h2>
             <label for="search"></label>
             <input id="search">
           <button type="button" class="btn btn-default" id="srch_btn">Go!</button>
-          <p class="response" id="search_response" ></p>
       </div>
 
       <div class="col-md-8">
         <p id="cities"></p>
       </div>
-    </div><!-- /.container -->
-
-    <script>
-      $('#srch_btn').on('click', function(e){
-         e.preventDefault();
-         searchterm = $('#search').val();
-         console.log("SEARCH", searchterm);
-         
-         function getlatlong(searchterm, done) {
-            $.ajax({
-               method: 'GET',
-               url: 'http://autocomplete.wunderground.com/aq',
-               data: {
-                   query: searchterm
-               },
-               dataType: 'jsonp',
-               jsonp: 'cb',
-               // success: function (response) {
-               //   console.log("DATA", response);
-               //   done(response.RESULTS);
-               //   // console.log(response['RESULTS'][0].zmw + '.json');
-                       
-               // },
-               success: done,
-               error: function () {
-                   console.log('error');
-               }
-           });
-           console.log("return from function");
-         };
-
-         var responseCallback = function(result) {
-
-             var zmw = result['RESULTS'][0].zmw + '.json'
-             console.log("THIS BE ZMW", zmw)
-             $.ajax({
-               method: 'GET',
-               url: 'http://api.wunderground.com/api/44f0caac7402487f/conditions/q/zmw:' + zmw,
-               dataType: 'jsonp',
-               success: function (data) {
-                  var value = data['current_observation']; 
-                  $("#cities").empty();
-                  $("#cities").append('<p>' + "Weather: " + value.weather + "<br>" + "Temperature: " + value.temperature_string + '</p>')
-                   console.log(data);
-               },
-               error: function () {
-                   console.log(error);
-               }
-           });
-
-         }
-
-        getlatlong(searchterm, responseCallback);
-             
-    });
-
-    </script>
-    <script>
-      $(function () {
-         var acXHR;
-         $('#search').autocomplete({
-            delay: 0,
-            source: function (req, resCB) {
-               // if (acXHR) {
-               //     acXHR.abort(); This is important for when type is json
-               // }
-              acXHR = $.ajax({
-                method: 'GET',
-                  url: 'http://autocomplete.wunderground.com/aq',
-                  data: {
-                    query: req.term
-                  },
-                  dataType: 'jsonp',
-                  jsonp: 'cb',
-                  success: function (data) {
-                    resCB(data['RESULTS'].map(function (city) {
-                      return city.name;
-                    }));
-                  },
-                  error: function () {
-                    resCB();
-                  }
-              });
-           }
-         });
-       });
-    </script>
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!-- // <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
-    <script src="../../dist/js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    </div>
   </body>
 </html>

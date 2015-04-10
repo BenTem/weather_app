@@ -1,59 +1,80 @@
-// $(document).ready(function() {
+$(function () {
+  // var acXHR;
+  $('#search').autocomplete({
+    delay: 0,
+    source: function (req, resCB) {
+       // if (acXHR) {
+       //     acXHR.abort(); This is important for when type is json
+       // }
+      acXHR = $.ajax({
+        method: 'GET',
+        url: 'http://autocomplete.wunderground.com/aq',
+        data: {
+          query: req.term
+        },
+        dataType: 'jsonp',
+        jsonp: 'cb',
+        success: function (data) {
+          resCB(data['RESULTS'].map(function (city) {
+            return city.name;
+          }));
+        },
+        error: function () {
+          resCB();
+        }
+      });
+    }
+  });
 
-//   $("#srch_btn").on('click',function(){
-//     console.log($("#search").val());
-//     $.getJSON( 
-//       "http://autocomplete.wunderground.com/aq?query=" + $('#search').val() + '&cb=?'
-//       ).done(function(returnData){
-//         var result = returnData.RESULTS
-//         $("#cities").empty();
-//         $.each(result, function(i, value) {
-//           $("#cities").append( "<p>"  + value.name + "</p>");
-//         })
-//       }); 
-//   });
+  $('#srch_btn').on('click', function(e){
+    e.preventDefault();
+    searchterm = $('#search').val();
+    console.log("SEARCH", searchterm);
+   
+    function getlatlong(searchterm, done) {
+      $.ajax({
+        method: 'GET',
+        url: 'http://autocomplete.wunderground.com/aq',
+        data: {
+          query: searchterm
+        },
+        dataType: 'jsonp',
+        jsonp: 'cb',
+        success: done,
+        error: function () {
+          console.log('error');
+        }
+      });
+      console.log("return from function");
+    };
 
-// });
-
-// $(document).ready(function() {
-
-//   $( "#srch_btn" ).autocomplete({
-//     source: function( request, response ) {
-//     $.getJSON( 
-//       "http://autocomplete.wunderground.com/aq?query=" + $('#search').val() + '&cb=?'
-//       ).done(function( data ) {
-//         response( data );
-//       });
-//     }
-//   });
-// });
-
-// $(function() {
-//   var availableTags = [
-//     "ActionScript",
-//     "AppleScript",
-//     "Asp",
-//     "BASIC",
-//     "C",
-//     "C++",
-//     "Clojure",
-//     "COBOL",
-//     "ColdFusion",
-//     "Erlang",
-//     "Fortran",
-//     "Groovy",
-//     "Haskell",
-//     "Java",
-//     "JavaScript",
-//     "Lisp",
-//     "Perl",
-//     "PHP",
-//     "Python",
-//     "Ruby",
-//     "Scala",
-//     "Scheme"
-//   ];
-//   $( "#search" ).autocomplete({
-//     source: availableTags
-//   });
-// });
+    var responseCallback = function(result) {
+      var zmw = result['RESULTS'][0].zmw + '.json'
+      console.log("THIS BE ZMW", zmw)
+      $.ajax({
+        method: 'GET',
+        url: 'http://api.wunderground.com/api/44f0caac7402487f/conditions/q/zmw:' + zmw,
+        dataType: 'jsonp',
+        success: function (data) {
+          var value = data['current_observation']; 
+          $("#cities").empty();
+          $("#cities").append("<h3>" +
+            value.display_location['city'] + ", " +  value.display_location['country'] + "</h3>" + "<p>" +
+            "<br>" + "Local time: " + value.local_time_rfc822 + 
+            "<br>" + "Weather: " + value.weather + 
+            "<br>" + "Temperature: " + value.temperature_string + 
+            "<br>" + "Feels Like: " + value.feelslike_string + 
+            "<br>" + "Precipitation today: " + value.precip_today_string +
+            "<br>" + "Dewpoint: " + value.dewpoint_string +
+            "<br>" + "wind: " + value.wind_string +
+            '</p>');
+            console.log(data);
+        },
+        error: function () {
+          console.log(error);
+        }
+      });
+    }
+    getlatlong(searchterm, responseCallback);
+  });
+});

@@ -14,5 +14,17 @@ input[type="text"] {
 input[type="text"]:focus,
 input[type="text"].focus {
   border: solid 1px #707070;
-  box-shadow: 0 0 5px 1px #969696;
+  box-shadow: 0 0 5px 10px #969696;
+}
+.ui-autocomplete { 
+  height: 200px; 
+  overflow-y: scroll; 
+  overflow-x: hidden;
+}
+.navbar-inverse {
+  background-color: #9C00E8;
+  border-color: #9C00E8;
+}
+.navbar-inverse .navbar-brand {
+  color: white;
 }
