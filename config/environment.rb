@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'bundler/setup'
-
 require 'active_support/all'
 
 # Load Sinatra Framework (with AR)
@@ -24,9 +23,6 @@ configure do
 
   set :views, File.join(Sinatra::Application.root, "app", "views")
 end
-
-# Set up the database and models
-require APP_ROOT.join('config', 'database')
 
 # Load the routes / actions
 require APP_ROOT.join('app', 'actions')
