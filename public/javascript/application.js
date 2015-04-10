@@ -29,8 +29,6 @@ $(function () {
   $('#srch_btn').on('click', function(e){
     e.preventDefault();
     searchterm = $('#search').val();
-    console.log("SEARCH", searchterm);
-   
     function getlatlong(searchterm, done) {
       $.ajax({
         method: 'GET',
@@ -45,12 +43,10 @@ $(function () {
           console.log('error');
         }
       });
-      console.log("return from function");
     };
 
     var responseCallback = function(result) {
       var zmw = result['RESULTS'][0].zmw + '.json'
-      console.log("THIS BE ZMW", zmw)
       $.ajax({
         method: 'GET',
         url: 'http://api.wunderground.com/api/44f0caac7402487f/conditions/q/zmw:' + zmw,
@@ -68,7 +64,7 @@ $(function () {
             "<br>" + "Dewpoint: " + value.dewpoint_string +
             "<br>" + "wind: " + value.wind_string +
             '</p>');
-            console.log(data);
+            // console.log(data);
         },
         error: function () {
           console.log(error);
