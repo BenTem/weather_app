@@ -1,12 +1,7 @@
 $(function () {
-  // var acXHR;
-
   $('#search').autocomplete({
     delay: 0,
     source: function (req, resCB) {
-       // if (acXHR) {
-       //     acXHR.abort(); This is important for when type is json
-       // }
       acXHR = $.ajax({
         method: 'GET',
         url: 'http://autocomplete.wunderground.com/aq',
@@ -16,16 +11,12 @@ $(function () {
         dataType: 'jsonp',
         jsonp: 'cb',
         success: function (data) {
-
           var cityArray = data["RESULTS"].filter(function(value) {
             return value.type == "city";
           });
-
           resCB(cityArray.map(function (city) {
             console.log(city)
-
               return city.name;;
-
           }));
         },
         error: function () {
@@ -88,7 +79,4 @@ $(function () {
     } 
     getlatlong(searchterm, responseCallback);
   });
-
-/////
-
 });
