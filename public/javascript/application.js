@@ -4,7 +4,7 @@ $(function () {
     source: function (req, resCB) {
       acXHR = $.ajax({
         method: 'GET',
-        url: 'http://autocomplete.wunderground.com/aq',
+        url: 'https://autocomplete.wunderground.com/aq',
         data: {
           query: req.term
         },
@@ -32,7 +32,7 @@ $(function () {
     function getlatlong(searchterm, done) {
       $.ajax({
         method: 'GET',
-        url: 'http://autocomplete.wunderground.com/aq',
+        url: 'https://autocomplete.wunderground.com/aq',
         data: {
           query: searchterm
         },
@@ -52,7 +52,7 @@ $(function () {
       console.log(result['RESULTS'][0])
       $.ajax({
         method: 'GET',
-        url: 'http://api.wunderground.com/api/44f0caac7402487f/conditions/q/zmw:' + zmw,
+        url: 'https://api.wunderground.com/api/44f0caac7402487f/conditions/q/zmw:' + zmw,
         dataType: 'jsonp',
         success: function (data) {
           var value = data['current_observation'];
