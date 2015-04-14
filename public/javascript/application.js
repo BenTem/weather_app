@@ -16,8 +16,16 @@ $(function () {
         dataType: 'jsonp',
         jsonp: 'cb',
         success: function (data) {
-          resCB(data['RESULTS'].map(function (city) {
-            return city.name;
+
+          var cityArray = data["RESULTS"].filter(function(value) {
+            return value.type == "city";
+          });
+
+          resCB(cityArray.map(function (city) {
+            console.log(city)
+
+              return city.name;;
+
           }));
         },
         error: function () {
@@ -47,7 +55,10 @@ $(function () {
     };
 
     var responseCallback = function(result) {
-      var zmw = result['RESULTS'][0].zmw + '.json'
+      var zmw = result['RESULTS'][0].zmw + '.json';
+      var lat = parseInt(result['RESULTS'][0].lat);
+      var lon = parseInt(result['RESULTS'][0].lon);
+      console.log(result['RESULTS'][0])
       $.ajax({
         method: 'GET',
         url: 'http://api.wunderground.com/api/44f0caac7402487f/conditions/q/zmw:' + zmw,
@@ -67,25 +78,17 @@ $(function () {
             "<br>" + "Dewpoint: " + value.dewpoint_string +
             "<br>" + "wind: " + value.wind_string +
             '</p>');
-            // console.log(data);
         },
         error: function () {
           console.log(error);
         }
       });
-    }
+      map.setCenter({lat: lat, lng: lon});
+      new google.maps.Marker({position: {lat: lat, lng: lon}, map: map}); 
+    } 
     getlatlong(searchterm, responseCallback);
   });
 
 /////
-  function initialize() {
-  var mapOptions = {
-    center: { lat: -34.397, lng: 150.644},
-    zoom: 8
-    };
-    var map = new google.maps.Map(document.getElementById('map-canvas'),
-        mapOptions);
-  }
-  google.maps.event.addDomListener(window, 'load', initialize);
 
 });
